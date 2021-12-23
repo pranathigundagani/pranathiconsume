@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="af80f293-5d2e-43b5-8db1-36d4720bdd57" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="57ef4f14-4d3e-4cfa-9770-bc2228c7a222" >
+		<http:request-connection host="addition-papi.us-e2.cloudhub.io" />
+	</http:request-config>
+	<flow name="pranathiconsumeFlow" doc:id="b54ac2aa-92de-48b6-89d6-41478a881c70" >
+		<http:listener doc:name="Listener" doc:id="3546224f-fd14-478e-865e-e851330cccbb" config-ref="HTTP_Listener_config" path="/consume"/>
+		<set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="76768c1c-dfb0-4676-a0be-7f95f3016661" variableName="correlationId"/>
+		<logger level="INFO" doc:name="Logger" doc:id="55b99283-a46d-466c-8de9-ab95663214a5" message="correlationId - #[vars.correlationId]"/>
+		<http:request method="POST" doc:name="Request" doc:id="31c43f1d-c552-44ec-baad-a7c5dce13cc3" config-ref="HTTP_Request_configuration" path="/add"/>
+		<logger level="INFO" doc:name="Logger" doc:id="fe5423bc-f58e-4bfb-9f99-cc0c7057dbc6" message="correlationId - #[vars.correlationId] - received response -#[payload]"/>
+	</flow>
+</mule>
